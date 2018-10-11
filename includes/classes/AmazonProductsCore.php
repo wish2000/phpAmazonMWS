@@ -103,15 +103,15 @@ abstract class AmazonProductsCore extends AmazonCore{
             }
             if (isset($x->Products)){
                 foreach($x->Products->children() as $z){
-                    $this->productList[$this->index] = new AmazonProduct($this->storeName, $z, $this->mockMode, $this->mockFiles,$this->config);
+                    $this->productList[$this->index] = (new AmazonProduct($this->store, $z, $this->mockMode, $this->mockFiles,$this->config))->getData();
                     if (isset($temp['@attributes'])) {
-                        $this->productList[$this->index]->data['Identifiers']['Request'] = $temp['@attributes'];
+                        $this->productList[$this->index]['Identifiers']['Request'] = $temp['@attributes'];
                     }
                     $this->index++;
                 }
             } else if (in_array($x->getName(), array('GetProductCategoriesForSKUResult', 'GetProductCategoriesForASINResult',
                     'GetLowestPricedOffersForSKUResult', 'GetLowestPricedOffersForASINResult'))){
-                $this->productList[$this->index] = new AmazonProduct($this->storeName, $x, $this->mockMode, $this->mockFiles,$this->config);
+                $this->productList[$this->index] = (new AmazonProduct($this->store, $x, $this->mockMode, $this->mockFiles,$this->config))->getData();
                 $this->index++;
             } else {
                 foreach($x->children() as $z){
@@ -123,7 +123,7 @@ abstract class AmazonProductsCore extends AmazonCore{
                         $this->productList[$z->getName()] = (string)$z;
                         $this->log("Special case: ".$z->getName(),'Warning');
                     } else {
-                        $this->productList[$this->index] = new AmazonProduct($this->storeName, $z, $this->mockMode, $this->mockFiles,$this->config);
+                        $this->productList[$this->index] = (new AmazonProduct($this->store, $z, $this->mockMode, $this->mockFiles,$this->config))->getData();
                         $this->index++;
                     }
                 }
